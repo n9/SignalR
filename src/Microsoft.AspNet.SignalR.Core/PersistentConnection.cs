@@ -59,6 +59,9 @@ namespace Microsoft.AspNet.SignalR
             _configurationManager = resolver.Resolve<IConfigurationManager>();
             _transportManager = resolver.Resolve<ITransportManager>();
 
+            // Ensure that this server is listening for any ACKs sent over the bus.
+            resolver.Resolve<AckSubscriber>();
+
             _initialized = true;
         }
 
@@ -397,8 +400,7 @@ namespace Microsoft.AspNet.SignalR
 
             return new string[] {
                 DefaultSignal,
-                PrefixHelper.GetConnectionId(connectionId),
-                PrefixHelper.GetAck(connectionId)
+                PrefixHelper.GetConnectionId(connectionId)
             };
         }
 
