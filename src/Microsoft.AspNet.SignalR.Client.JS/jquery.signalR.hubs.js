@@ -187,6 +187,7 @@
                         source = result.IsHubException ? "HubException" : "Exception";
                         error = signalR._.error(result.Error, source);
                         error.data = result.ErrorData;
+                        error.remoteStack = result.StackTrace;
 
                         connection.log(that.hubName + "." + methodName + " failed to execute. Error: " + error.message);
                         d.rejectWith(that, [error]);
