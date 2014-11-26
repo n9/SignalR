@@ -149,13 +149,24 @@ namespace Microsoft.AspNet.SignalR.Hubs
         protected override Task OnReceived(IRequest request, string connectionId, string data)
         {
             HubRequest hubRequest = _requestParser.Parse(data, _serializer);
+            
+            // Resolving the actual state object
+            var tracker = new StateChangeTracker(hubRequest.State);
 
             // Create the hub
-            HubDescriptor descriptor = _manager.EnsureHub(hubRequest.Hub,
-                _counters.ErrorsHubInvocationTotal,
-                _counters.ErrorsHubInvocationPerSec,
-                _counters.ErrorsAllTotal,
-                _counters.ErrorsAllPerSec);
+            HubDescriptor descriptor;
+            try
+            {
+                descriptor = _manager.EnsureHub(hubRequest.Hub,
+                    _counters.ErrorsHubInvocationTotal,
+                    _counters.ErrorsHubInvocationPerSec,
+                    _counters.ErrorsAllTotal,
+                    _counters.ErrorsAllPerSec);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ProcessResponse(tracker, result: null, request: hubRequest, error: ex);
+            }
 
             IJsonValue[] parameterValues = hubRequest.ParameterValues;
 
@@ -174,8 +185,6 @@ namespace Microsoft.AspNet.SignalR.Hubs
                 methodDescriptor = new NullMethodDescriptor(descriptor, hubRequest.Method, availableMethods);
             }
 
-            // Resolving the actual state object
-            var tracker = new StateChangeTracker(hubRequest.State);
             var hub = CreateHub(request, descriptor, connectionId, tracker, throwIfFailedToCreate: true);
 
             return InvokeHubPipeline(hub, parameterValues, methodDescriptor, hubRequest, tracker)
