@@ -82,7 +82,6 @@
     <Compile Include="HubConfiguration.cs" />
     <Compile Include="HubException.cs" />
     <Compile Include="Hubs\ConnectionIdProxy.cs" />
-    <Compile Include="Hubs\HubBase.cs" />
     <Compile Include="Hubs\HubConnectionContextBase.cs" />
     <Compile Include="Hubs\IHubConnectionContext.cs" />
     <Compile Include="Hubs\MultipleSignalProxy.cs" />
@@ -270,6 +269,7 @@
     <Compile Include="Transports\ITransportConnection.cs" />
     <Compile Include="Json\JsonUtility.cs" />
     <Compile Include="GroupManager.cs" />
+    <Compile Include="Infrastructure\AckSubscriber.cs" />
     <Compile Include="Messaging\Command.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
